@@ -38,6 +38,9 @@ class AirConditioner : public ApplianceBase {
   Preset getPreset() const { return this->m_preset; }
   const Capabilities &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
+  /// Ask for power usage (group 4) every 30 s. On by default; units that never answer
+  /// it hold the bus for every retry, so turn it off when nobody reads it.
+  void setPowerQuery(bool state) { this->m_powerQuery = state; }
   /// Fault code from the status frame (0 = none)
   uint8_t getErrorCode() const { return this->m_errorCode; }
   /// The unit's own filter cleaning reminder
@@ -67,6 +70,7 @@ class AirConditioner : public ApplianceBase {
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
+  bool m_powerQuery{true};
   uint8_t m_errorCode{};
   bool m_filterAlert{};
   Control m_pendingControl{};

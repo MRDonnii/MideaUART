@@ -15,3 +15,6 @@ commit ESPHome 2026.9 pins, plus:
    citi94/midea-homekit-dongle.
 4. **Fault code and filter reminder** from the 0xC0 status frame (byte 16 and byte 13 bit 5):
    `getErrorCode()`, `getFilterAlert()`.
+5. **Optional power query** – `setPowerQuery(false)` stops the GET_POWERUSAGE (group 4) request
+   every 30 s. Units that never answer it (e.g. Qlima S 52xx) otherwise hold the bus for
+   three 2-second retries each time, delaying commands.
