@@ -38,11 +38,19 @@ class AirConditioner : public ApplianceBase {
   Preset getPreset() const { return this->m_preset; }
   const Capabilities &getCapabilities() const { return this->m_capabilities; }
   void displayToggle() { this->m_displayToggle(); }
+  /// Fault code from the status frame (0 = none)
+  uint8_t getErrorCode() const { return this->m_errorCode; }
+  /// The unit's own filter cleaning reminder
+  bool getFilterAlert() const { return this->m_filterAlert; }
+  /// Queue an engineering group data query. `onData` receives the 0xC1 reply body
+  /// (byte 0 = 0xC1) for this group; `onError` runs when all attempts fail.
+  void queryGroup(uint8_t group, std::function<void(const FrameData &)> onData, Handler onError = nullptr);
  protected:
   void m_getPowerUsage();
   void m_getCapabilities();
   void m_getStatus();
   void m_setStatus(StatusData status);
+  void m_flushPendingControl();
   void m_displayToggle();
   ResponseStatus m_readStatus(FrameData data);
   Capabilities m_capabilities{};
@@ -59,6 +67,9 @@ class AirConditioner : public ApplianceBase {
   Preset m_lastPreset{Preset::PRESET_NONE};
   StatusData m_status{};
   bool m_sendControl{};
+  uint8_t m_errorCode{};
+  bool m_filterAlert{};
+  Control m_pendingControl{};
 };
 
 }  // namespace ac
